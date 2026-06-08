@@ -1,0 +1,41 @@
+import os
+import logging
+from telegram import Update
+from telegram.ext import Application, MessageHandler, filters, ContextTypes
+
+logging.basicConfig(level=logging.INFO)
+
+TOKEN = os.environ.get("BOT_TOKEN")
+OWNER_ID = os.environ.get("OWNER_ID")
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    text = update.message.text
+    chat_id = update.effective_chat.id
+    
+    # Пересылаем тебе
+    await context.bot.send_message(
+        chat_id=OWNER_ID,
+        text=f"👤 {user.first_name} (@{user.username})\nID: {chat_id}\n\n💬 {text}"
+    )
+    
+    # Ответ клиенту
+    await update.message.reply_text(
+        "🌙 Вольфгар получил твой вопрос. Ответ придёт в течение 24 часов."
+    )
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    await context.bot.send_message(
+        chat_id=OWNER_ID,
+        text=f"🔔 Новый пользователь!\nID: {chat_id}\n@{update.effective_user.username}"
+    )
+    await update.message.reply_text(
+        "🌙 Добро пожаловать. Напиши свой вопрос для рунического расклада."
+    )
+
+app = Application.builder().token(TOKEN).build()
+from telegram.ext import CommandHandler
+app.add_handler(CommandHandler("start", start))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+app.run_polling()
