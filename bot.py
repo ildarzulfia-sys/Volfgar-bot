@@ -1,1 +1,1 @@
-
+import time,logging from binance.client import Client from binance.enums import * import pandas as pd import ta API_KEY="ВСТАВЬ_СЮДА" API_SECRET="ВСТАВЬ_СЮДА" SYMBOL="BTCUSDT" LEVERAGE=5 TIMEFRAME="4h" USDT_PER_TRADE=20 ATR_SL=1.5 ATR_TP=3.0
